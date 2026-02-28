@@ -1,0 +1,19 @@
+{
+    "uuid": "f62b2170-ebf6-4bc9-9ec6-121f66cc7e11",
+    "raison": "Utilisation de X-Ray et Fly",
+    "priorite": 1,
+    "couleur": "#ff4d4d"
+  },
+  {
+    "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "raison": "Insultes graves dans le chat global",
+    "priorite": 3,
+    "couleur": "#ffa502"
+  },
+  {
+    "uuid": "b0870942-d39a-4c28-98e8-63cbcaec0004",
+    "raison": "Grief de la base spawn",
+    "priorite": 2,
+    "couleur": "#a55eea"
+  }
+]
