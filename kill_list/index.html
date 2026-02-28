@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Modération - Joueurs</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --danger: #ff4d4d;
+            --warning: #ffa502;
+            --success: #2ed573;
+            --info: #1e90ff;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 2rem; }
+        h1 { text-align: center; margin-bottom: 2rem; color: var(--text-main); }
+        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .card { background-color: var(--card-bg); border-radius: 10px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); border-top: 4px solid #333; transition: transform 0.2s ease; }
+        .card:hover { transform: translateY(-5px); }
+        .card[data-risk="high"] { border-top-color: var(--danger); }
+        .card[data-risk="medium"] { border-top-color: var(--warning); }
+        .card[data-risk="low"] { border-top-color: var(--success); }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 1rem; border-bottom: 1px solid #333; padding-bottom: 1rem; }
+        .avatar { width: 50px; height: 50px; border-radius: 8px; background-color: #333; }
+        .player-info h2 { margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .uuid-text { font-size: 0.75rem; color: var(--text-muted); font-family: monospace; margin-top: 4px; }
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .badge-high { background-color: rgba(255, 77, 77, 0.2); color: var(--danger); }
+        .badge-medium { background-color: rgba(255, 165, 2, 0.2); color: var(--warning); }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem; }
+        .reasons h3 { font-size: 0.9rem; color: var(--text-muted); margin: 0 0 5px 0; text-transform: uppercase; }
+        .reasons ul { margin: 0 0 1rem 0; padding-left: 20px; font-size: 0.9rem; }
+        .flags { display: flex; gap: 10px; margin-bottom: 1rem; }
+        .flag { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; background-color: #333; color: var(--text-muted); opacity: 0.5; }
+        .flag.active { opacity: 1; }
+        .flag.active.cheat { background-color: var(--danger); color: white; }
+        .flag.active.alts { background-color: var(--info); color: white; }
+        .flag.active.toxicity { background-color: var(--warning); color: white; }
+        .footer { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; border-top: 1px solid #333; padding-top: 1rem; }
+        .loader { text-align: center; color: var(--text-muted); grid-column: 1 / -1; }
+        .error-msg { color: var(--danger); text-align: center; grid-column: 1 / -1; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>🚨 Dashboard Modération</h1>
+    <div class="container" id="player-container">
+        <div class="loader" id="loader">Chargement des données joueurs...</div>
+    </div>
+
+    <script>
+        // Fonction pour récupérer les données du fichier data.json
+        async function loadJsonData() {
+            try {
+                const response = await fetch('data.json');
+                if (!response.ok) throw new Error("Erreur HTTP: " + response.status);
+                return await response.json();
+            } catch (error) {
+                console.error("Erreur de chargement du JSON :", error);
+                document.getElementById('loader').innerHTML = `
+                    <div class="error-msg">
+                        Impossible de charger le fichier data.json.<br>
+                        ⚠️ Les navigateurs bloquent la lecture de fichiers locaux par sécurité. <br>
+                        Vous devez ouvrir ce fichier via un serveur web (ex: extension "Live Server" sur VSCode).
+                    </div>`;
+                return null;
+            }
+        }
+
+        // Fonction pour récupérer le pseudo via l'API Mojang (Ashcon)
+        async function fetchPlayerName(uuid) {
+            try {
+                const cleanUuid = uuid.replace(/-/g, '');
+                const response = await fetch(`https://api.ashcon.app/mojang/v2/user/${cleanUuid}`);
+                if (!response.ok) throw new Error("Joueur non trouvé");
+                const data = await response.json();
+                return data.username;
+            } catch (error) {
+                return "Joueur Inconnu";
+            }
+        }
+
+        // Fonction de formatage des dates
+        function formatDate(dateString) {
+            if (!dateString) return "N/A";
+            const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options).replace(',', ' à');
+        }
+
+        // Fonction principale pour générer l'interface
+        async function renderDashboard() {
+            const container = document.getElementById('player-container');
+            const loader = document.getElementById('loader');
+            
+            // 1. On charge le fichier JSON externe
+            const playersJson = await loadJsonData();
+            
+            // Si le fichier n'a pas pu être chargé, on arrête là
+            if (!playersJson) return;
+
+            const cardsHTML = [];
+
+            // 2. On boucle sur les données du JSON
+            for (const[uuid, data] of Object.entries(playersJson)) {
+                
+                // Récupération du pseudo via l'UUID
+                const username = await fetchPlayerName(uuid);
+                const avatarUrl = `https://minotar.net/helm/${uuid}/50.png`;
+
+                const flagCheat = data.flags.cheat ? 'active cheat' : '';
+                const flagAlts = data.flags.alts ? 'active alts' : '';
+                const flagTox = data.flags.toxicity ? 'active toxicity' : '';
+
+                const card = `
+                    <div class="card" data-risk="${data.risk_level}">
+                        <div class="header">
+                            <img src="${avatarUrl}" alt="Avatar" class="avatar">
+                            <div class="player-info">
+                                <h2>
+                                    ${username}
+                                    <span class="badge badge-${data.risk_level}">${data.risk_level}</span>
+                                </h2>
+                                <div class="uuid-text">${uuid}</div>
+                            </div>
+                        </div>
+
+                        <div class="stats">
+                            <div><strong>Score:</strong> ${data.score}/100</div>
+                            <div><strong>Statut:</strong> ${data.status.replace('_', ' ')}</div>
+                            <div><strong>Priorité:</strong> ${data.priority}</div>
+                        </div>
+
+                        <div class="flags">
+                            <span class="flag ${flagCheat}">Cheat</span>
+                            <span class="flag ${flagAlts}">Alts</span>
+                            <span class="flag ${flagTox}">Toxicité</span>
+                        </div>
+
+                        <div class="reasons">
+                            <h3>Raison(s) :</h3>
+                            <ul>
+                                ${data.reasons.map(r => `<li>${r}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <div class="footer">
+                            <span><strong>Ajouté:</strong> ${formatDate(data.added_at)}</span>
+                            <span><strong>Review:</strong> ${formatDate(data.review_date)}</span>
+                        </div>
+                    </div>
+                `;
+                cardsHTML.push(card);
+            }
+
+            // On cache le texte de chargement et on affiche le tout
+            loader.style.display = 'none';
+            container.innerHTML = cardsHTML.join('');
+        }
+
+        // Lancement au chargement de la page
+        document.addEventListener('DOMContentLoaded', renderDashboard);
+    </script>
+</body>
+</html>
