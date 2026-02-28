@@ -69,7 +69,6 @@
         .player-info h2 {
             margin: 0;
             font-size: 1.3rem;
-            /* La couleur est gérée en JS */
         }
 
         .uuid-text {
@@ -118,67 +117,81 @@
     <h1>🔨 Liste des Sanctions</h1>
     
     <div class="container" id="player-container">
-        <div class="loader" id="loader">Chargement des données depuis GitHub...</div>
+        <div class="loader" id="loader">Chargement du fichier depuis GitHub...</div>
     </div>
 
     <script>
-        // 1. Fonction pour charger le fichier JSON depuis ton URL brute GitHub
+        // 1. Charger le fichier JSON
         async function loadJsonData() {
             try {
-                // On utilise ton lien exact
                 const response = await fetch('https://raw.githubusercontent.com/OblivionFR/oblivionfr.github.io/refs/heads/main/kill_list/data.json');
-                if (!response.ok) throw new Error("Impossible de lire le fichier distant");
+                if (!response.ok) throw new Error("Impossible de lire le fichier");
                 return await response.json();
             } catch (error) {
-                console.error("Erreur:", error);
-                document.getElementById('loader').innerHTML = "❌ Erreur : Impossible de charger le fichier data.json. Vérifie le format du fichier.";
+                document.getElementById('loader').innerHTML = "❌ Erreur : Impossible de charger le fichier data.json.";
                 return null;
             }
         }
 
-        // 2. Fonction pour récupérer le pseudo sans bloquer le reste du site
-        async function fetchPlayerName(uuid, elementId) {
+        // 2. Fonction pour récupérer le TOUT DERNIER pseudo via Ashcon (Proxy Mojang en temps réel)
+        async function fetchPlayerName(uuid) {
             try {
-                // Utilisation de l'API PlayerDB (très fiable)
-                const response = await fetch(`https://playerdb.co/api/player/minecraft/${uuid}`);
-                if (!response.ok) throw new Error("Joueur non trouvé");
+                const cleanUuid = uuid.replace(/-/g, '');
+                const response = await fetch(`https://api.ashcon.app/mojang/v2/user/${cleanUuid}`);
+                if (!response.ok) return "Pseudo Inconnu";
                 const data = await response.json();
-                
-                // On met à jour le texte avec le pseudo trouvé
-                document.getElementById(elementId).innerText = data.data.player.username;
+                return data.username;
             } catch (error) {
-                document.getElementById(elementId).innerText = "Pseudo Inconnu";
+                return "Pseudo Inconnu";
             }
         }
 
-        // 3. Fonction principale d'affichage
+        // 3. Fonction principale pour tout traiter
         async function renderDashboard() {
             const container = document.getElementById('player-container');
             const loader = document.getElementById('loader');
             
-            // On récupère la liste
-            const playersList = await loadJsonData();
-            if (!playersList) return; // Si erreur (comme la virgule manquante), on arrête
+            // Étape A: Récupération du JSON
+            let playersList = await loadJsonData();
+            if (!playersList) return;
 
-            // On retire le texte de chargement
+            // Étape B: On prévient l'utilisateur que ça télécharge les pseudos
+            loader.innerText = "Récupération des derniers pseudos Mojang en cours...";
+
+            // Étape C: On récupère TOUS les pseudos de manière simultanée
+            const fetchPromises = playersList.map(async (player) => {
+                player.username = await fetchPlayerName(player.uuid);
+                return player;
+            });
+
+            // On attend que tous les pseudos soient trouvés
+            playersList = await Promise.all(fetchPromises);
+
+            // Étape D: Tri des joueurs
+            playersList.sort((a, b) => {
+                // 1. On trie par priorité d'abord (Priorité 1 en premier, puis 2, etc.)
+                if (a.priorite !== b.priorite) {
+                    return a.priorite - b.priorite; 
+                }
+                
+                // 2. Si la priorité est la même, on trie par pseudo alphabétiquement (A -> Z)
+                return a.username.toLowerCase().localeCompare(b.username.toLowerCase());
+            });
+
+            // Étape E: On efface le loader et on génère les cartes triées
             loader.style.display = 'none';
 
-            // On boucle sur chaque joueur
-            playersList.forEach((player, index) => {
-                
-                // Identifiant unique pour mettre à jour le pseudo plus tard
-                const pseudoElementId = `pseudo-${index}`;
-                
-                // Tête du joueur
+            let cardsHTML = '';
+            playersList.forEach((player) => {
+                // Image de la tête à jour
                 const avatarUrl = `https://minotar.net/helm/${player.uuid}/50.png`;
 
-                // On crée la carte HTML
-                const cardHTML = `
+                cardsHTML += `
                     <div class="card">
                         <div class="header">
                             <img src="${avatarUrl}" alt="Avatar" class="avatar" onerror="this.src='https://minotar.net/helm/steve/50.png'">
                             <div class="player-info">
-                                <h2 id="${pseudoElementId}" style="color: ${player.couleur};">Chargement...</h2>
+                                <h2 style="color: ${player.couleur};">${player.username}</h2>
                                 <div class="uuid-text">${player.uuid}</div>
                             </div>
                         </div>
@@ -194,16 +207,13 @@
                         </div>
                     </div>
                 `;
-
-                // On insère la carte sur la page immédiatement
-                container.insertAdjacentHTML('beforeend', cardHTML);
-
-                // On lance la recherche du pseudo en arrière-plan
-                fetchPlayerName(player.uuid, pseudoElementId);
             });
+
+            // On injecte tout sur la page web
+            container.innerHTML = cardsHTML;
         }
 
-        // On lance la fonction
+        // Démarrage du script
         renderDashboard();
     </script>
 </body>
