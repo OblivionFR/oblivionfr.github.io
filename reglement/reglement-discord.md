@@ -335,31 +335,30 @@ La modération se fait au **cas par cas**, dans l’objectif d’assurer un envi
 Pour garantir un environnement sécurisé, agréable et conforme aux règles, **l’équipe de modération dispose de pouvoirs spécifiques**.\
 Toute intervention du staff doit être respectée **sans contestation en public**.
 
-#### 🔹 <mark style="color:orange;">**1. Convocations & échanges**</mark>
+🔹 1. Convocations & échanges
+Le staff peut vous demander de rejoindre un vocal afin d’éclaircir une situation.
 
-* <mark style="color:yellow;">Le staff peut vous</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**demander de rejoindre un vocal**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">afin d’éclaircir une situation.</mark>
-* <mark style="color:yellow;">**Refuser une convocation sans raison valable**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">peut entraîner une sanction.</mark>
+Refuser une convocation sans raison valable peut entraîner une sanction.
 
-#### 🔹 <mark style="color:orange;">**2. Modération des messages**</mark>
+🔹 2. Modération des messages
+Le staff peut supprimer, censurer ou modifier tout message non conforme au règlement (spam, insultes, provocations, contenus interdits…).
 
-* <mark style="color:yellow;">Le staff peut</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**supprimer, censurer ou modifier**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">tout message non conforme au règlement (spam, insultes, provocations, contenus interdits…).</mark>
-* <mark style="color:yellow;">Le staff peut intervenir</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**même si la règle exacte n’est pas listée**</mark><mark style="color:yellow;">, lorsque le comportement perturbe la communauté.</mark>
+Le staff peut intervenir même si la règle exacte n’est pas listée, lorsque le comportement perturbe la communauté.
 
-#### 🔹 <mark style="color:orange;">3. Gestion des salons vocaux</mark>
+🔹 3. Gestion des salons vocaux
+Le staff peut vous déplacer, déconnecter, mute ou deaf si la situation l’exige (nuisance, micro saturé, troll, perturbation, non-respect des règles…).
 
-* <mark style="color:yellow;">Le staff peut vous</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**déplacer, déconnecter, mute ou deaf**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">si la situation l’exige (nuisance, micro saturé, troll, perturbation, non-respect des règles…).</mark>
-* <mark style="color:yellow;">Une mauvaise qualité sonore, un comportement toxique ou un troll vocal peut justifier une intervention.</mark>
-* <mark style="color:yellow;">Le staff peut enregistrer toute conversation vocale, partage d’écran ou autre média, avec ou sans raison.</mark>
+Une mauvaise qualité sonore, un comportement toxique ou un troll vocal peut justifier une intervention.
 
-#### 🔹 <mark style="color:orange;">4. Identité & présentation</mark>
+Le staff peut enregistrer toute conversation vocale, partage d’écran ou autre média, avec ou sans raison.
 
-* <mark style="color:yellow;">Le staff peut</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**changer votre pseudo**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">si celui-ci est inapproprié, illisible ou contraire aux règles du serveur.</mark>
+🔹 4. Identité & présentation
+Le staff peut changer votre pseudo si celui-ci est inapproprié, illisible ou contraire aux règles du serveur.
 
-#### 🔹 <mark style="color:orange;">**5. Sécurité du serveur**</mark>
+🔹 5. Sécurité du serveur
+Toute tentative de raid, d’organisation de raid ou de participation à un raid Discord est strictement interdite et entraînera un ban définitif.
 
-* <mark style="color:yellow;">Toute tentative de raid, d’organisation de raid ou de participation à un raid Discord est</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**strictement interdite**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">et entraînera un</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**ban définitif**</mark><mark style="color:yellow;">.</mark>
+🔹 6. Décisions & contestations
+Les décisions du staff ne sont pas négociables lorsqu’une règle listée ici est enfreinte.
 
-#### 🔹 <mark style="color:orange;">6. Décisions & contestations</mark>
-
-* <mark style="color:yellow;">Les décisions du staff ne sont</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**pas négociables**</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">lorsqu’une règle listée ici est enfreinte.</mark>
-* <mark style="color:yellow;">Vous pouvez contester une sanction</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**uniquement en privé**</mark><mark style="color:yellow;">, et</mark> <mark style="color:yellow;"></mark><mark style="color:yellow;">**jamais publiquement**</mark><mark style="color:yellow;">.</mark>
+Vous pouvez contester une sanction uniquement en privé, et jamais publiquement.
